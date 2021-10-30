@@ -3,12 +3,14 @@ local DOMAIN = assert(ENV_SNIKKET_DOMAIN, "Please set the SNIKKET_DOMAIN environ
 local RETENTION_DAYS = tonumber(ENV_SNIKKET_RETENTION_DAYS) or 7;
 local UPLOAD_STORAGE_GB = tonumber(ENV_SNIKKET_UPLOAD_STORAGE_GB);
 
+local CERT_PATH = ENV_SNIKKET_CERTFILE or "/etc/prosody/certs/"..DOMAIN..".crt";
+local KEY_PATH = ENV_SNIKKET_KEYFILE or "/etc/prosody/certs/"..DOMAIN..".key";
+
 if prosody.process_type == "prosody" and not prosody.config_loaded then
 	-- Wait at startup for certificates
 	local lfs, socket = require "lfs", require "socket";
-	local cert_path = "/etc/prosody/certs/"..DOMAIN..".crt";
 	local counter = 0;
-	while not lfs.attributes(cert_path, "mode") do
+	while not lfs.attributes(CERT_PATH, "mode") do
 		counter = counter + 1;
 		if counter == 1 or counter%6 == 0 then
 			print("Waiting for certificates...");
@@ -205,6 +207,9 @@ end
 
 VirtualHost (DOMAIN)
 	authentication = "internal_hashed"
+
+	certificate = CERT_PATH;
+	key = KEY_PATH;
 
 	http_files_dir = "/var/www"
 	http_paths = {
