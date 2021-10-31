@@ -181,7 +181,7 @@ else
 	statistics_interval = 60
 end
 
-certificates = "certs"
+-- certificates = "certs"
 
 group_default_name = ENV_SNIKKET_SITE_NAME or DOMAIN
 
@@ -208,8 +208,12 @@ end
 VirtualHost (DOMAIN)
 	authentication = "internal_hashed"
 
-	certificate = CERT_PATH;
-	key = KEY_PATH;
+	ssl = {
+		ciphers = "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4";
+		certificate = CERT_PATH;
+		key = KEY_PATH;
+	};
+
 
 	http_files_dir = "/var/www"
 	http_paths = {
